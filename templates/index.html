@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <style>
+        body, html {
+            background-image: url("https://images.pexels.com/photos/3394939/pexels-photo-3394939.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
+  height: 100%;
+  margin: 0;
+}
+        .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+            margin-top: 140px;
+  width: 50%;
+}
+    </style>
+{% endblock %}
+
+{% block body %}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Recommendation engine</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/">Home</a></li>
+      <li><a href="#">Services</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact us</a></li>
+    </ul>
+  </div>
+</nav>
+    <img class="center" style="width: 50%"; height="50%" src="https://serving.photos.photobox.com/00028235148ebcbe039679bf8cb553c055e2c0ca3e4c1feb5f4eb967e81e8cd7877cada6.jpg" alt="">
+
+{% endblock %}
