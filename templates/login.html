@@ -26,11 +26,25 @@
       <a style="font-size: 16px; color: white;"  class="navbar-brand" href="#">About</a>
       <a style="font-size: 16px; color: white;"  class="navbar-brand" href="#">Contact us</a>
     </div>
-    <ul class="nav navbar-nav ml-auto">
-        <li><a style="float: right" class="btn btn-success nav-item " href="{{ url_for('login') }}" role="button">Login</a></li>
-        <li><a style="float: right" class="btn btn-success mr-3 ml-4" href="{{ url_for('signup') }}" role="button">Sign up</a></li>
-    </ul>
   </div>
 </nav>
-    <img class="center" style="width: 50%"; height="50%" src="https://serving.photos.photobox.com/00028235148ebcbe039679bf8cb553c055e2c0ca3e4c1feb5f4eb967e81e8cd7877cada6.jpg" alt="">
+    <div>
+    <h1 style="color: white; text-align: center; margin-top: 3px">Login</h1>
+    <p style="color: white; font-size: 19px; text-align: center; display: block">please fill in this form to login !</p>
+    <hr style="background-color: gray">
+    </div>
+    <div class="loginbox">
+    <img  src="https://thumbs.dreamstime.com/b/login-icon-button-vector-illustration-isolated-white-background-127000574.jpg" class="image">
+    <form>
+        <label>Username : <br>
+            <input type="text" name="username" placeholder="Username">
+        </label>
+        <label>Password : <br>
+            <input type="password" name="password" placeholder="Password">
+        </label><br>
+        <button type="submit" class="btn btn-primary btn-lg">Log in</button>
+    </form><br>
+    	<div class="text-center">Don't you have an account? <a href="{{ url_for('signup') }}">Sign up here!</a></div>
+    </div>
+
 {% endblock %}
