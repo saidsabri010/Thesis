@@ -91,6 +91,13 @@ def main():  # put application's code here
     return render_template('main.html')
 
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
 if __name__ == '__main__':
     db.create_all()
     app.run()
