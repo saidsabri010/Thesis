@@ -45,9 +45,19 @@ def login():  # put application's code here
     return render_template('login.html')
 
 
-@app.route('/login1')
+@app.route('/login1', methods=['GET', 'POST'])
 def login1():  # put application's code here
-    return render_template('login.html')
+    username = request.form['username']
+    password = request.form['password']
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        flash('this username does not exist !')
+        return render_template("login.html")
+    elif password != user.password:
+        flash('password is wrong, please try again  !')
+        return render_template("login.html")
+    login_user(user)
+    return redirect(url_for('main'))
 
 
 @app.route('/signup')
@@ -55,7 +65,28 @@ def signup():  # put application's code here
     return render_template('signup.html')
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():  # put application's code here
+    username = request.form['username']
+    email = request.form['email']
+    password = request.form['password']
+    password_confirm = request.form['confirm_password']
+    user = User.query.filter_by(email=email, username=username).first()
+    if user:
+        flash("email is already used !")
+        return render_template('signup.html')
+    elif password != password_confirm:
+        flash('password must match')
+    else:
+        new_user = User(username, email, password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template("signup.html")
+
+
 @app.route('/main')
+@login_required
 def main():  # put application's code here
     return render_template('main.html')
 
