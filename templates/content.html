@@ -8,19 +8,10 @@
             background-size: cover;
             margin: 0;
 }
-        .container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin: -10px 0 0 380px; /* margin is -0.5 * dimension */
-}
-.center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 140px;
-    width: 50%;
+.movies{
+    color: white;
+    text-align: center;
+    text-space: 2px;
 }
     </style>
 {% endblock %}
@@ -40,9 +31,17 @@
          <a class="btn btn-warning" href="{{ url_for('logout') }}" role="button">Log out</a>
       </div>
 </nav>
-    <div class="container">
-    <a style="margin-right: 12px; padding: 5px; font-size: 14px; font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace" class="btn btn-success" href="{{ url_for('content') }}" role="button">Content Based filtering</a>
-<a style=" padding: 5px; font-size: 14px; font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace" class="btn btn-success" href="{{ url_for('login') }}" role="button">Collaborative Based filtering</a>  </div>
-
+<form action="{{ url_for('recommend') }}" method="post">
+  <div class="form-group">
+    <label style="font-size: 23px; color: white" for="exampleInputEmail1">Movie Title </label>
+    <input type="text" name="movie_user_likes" required class="form-control" placeholder="Title">
+  </div>
+  <button type="submit" name="recommend" class="btn btn-primary">Submit</button>
+</form>
+<div class="movies">
+{% for movie in movies %}
+{{ movie }}
+{% endfor %}
+</div>
 
 {% endblock %}

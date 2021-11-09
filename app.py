@@ -3,6 +3,12 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, logout_user, login_required
 from flask_login import LoginManager, UserMixin
+import pandas as pd
+import numpy as np
+from flask import render_template, request
+from flask import Flask
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:said@localhost:5432/recommendation'
@@ -96,6 +102,52 @@ def main():  # put application's code here
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/content', methods=['GET', 'POST'])
+@login_required
+def content():
+    return render_template('content.html')
+
+
+df = pd.read_csv('https://raw.githubusercontent.com/codeheroku/Introduction-to-Machine-Learning/master/Building'
+                 '%20a%20Movie%20Recommendation%20Engine/movie_dataset.csv')
+
+
+def combine_features(row):
+    return row["keywords"] + " " + row["cast"] + " " + row["genres"] + " " + row["director"]
+
+
+def get_title_from_index(index):
+    return df[df.index == index]["title"].values[0]
+
+
+def get_index_from_title(title):
+    return df[df.title == title]["index"].values[0]
+
+
+@app.route('/recommend', methods=['GET', 'POST'])
+@login_required
+def recommend():
+    movie_user_likes = request.form['movie_user_likes']
+    features = ['keywords', 'cast', 'genres', 'director']
+    for feature in features:
+        df[feature] = df[feature].fillna('')
+    df["combined_features"] = df.apply(combine_features, axis=1)
+    vectorizer = CountVectorizer()
+    matrix = vectorizer.fit_transform(df["combined_features"])
+    cosine_sim = cosine_similarity(matrix)
+    movie_index = get_index_from_title(movie_user_likes)
+    similar_movies = list(enumerate(cosine_sim[movie_index]))
+    sorted_similar_movies = sorted(similar_movies, key=lambda x: x[1], reverse=True)
+    count = 0
+    movies = []
+    for movie in sorted_similar_movies:
+        movies.append(get_title_from_index(movie[0]))
+        count += 1
+        if count > 50:
+            break
+    return render_template('content.html', movies=movies)
 
 
 if __name__ == '__main__':
