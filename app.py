@@ -36,6 +36,16 @@ class User(db.Model, UserMixin):
         self.password = password
 
 
+class Movie(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    movie = db.Column(db.String(255), nullable=False)
+    similar = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, movie, similar):
+        self.movie = movie
+        self.similar = similar
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -147,6 +157,9 @@ def recommend():
         count += 1
         if count >= 10:
             break
+        data = Movie(movie_user_likes, get_title_from_index(movie[0]))
+        db.session.add(data)
+        db.session.commit()
     return render_template('content.html', data=movies)
 
 
