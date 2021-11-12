@@ -145,9 +145,9 @@ def recommend():
     for movie in sorted_similar_movies:
         movies.append(get_title_from_index(movie[0]))
         count += 1
-        if count > 50:
+        if count >= 10:
             break
-    return render_template('content.html', movies=movies)
+    return render_template('content.html', data=movies)
 
 
 if __name__ == '__main__':

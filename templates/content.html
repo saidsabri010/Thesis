@@ -2,29 +2,20 @@
 {% block head %}
     <style>
         body, html {
-            background-image: url("https://cdn-gcp.marutitech.com/wp-media/2019/10/e5c01967-chatbot-powered-by-artificial-intelligence.jpg");
+            background-image: url("https://previews.123rf.com/images/1stchoice/1stchoice1506/1stchoice150600018/41591970-white-grey-background-in-soft-grunge-style-concrete-texture.jpg");
             height: 100%;
             background-repeat: no-repeat;
             background-size: cover;
             margin: 0;
-}
-.movies{
-    color: white;
-    text-align: center;
-    text-space: 2px;
 }
     </style>
 {% endblock %}
 
 {% block body %}
 <nav class="navbar navbar-expand-sm ">
+<a class="btn btn-success" href="{{ url_for('main') }}" role="button">Back</a>
   <div class="container-fluid">
     <div class="navbar-header">
-      <a style="font-size: 16px; color: white;"  class="navbar-brand" href="/">Recommendation engine</a>
-      <a style="font-size: 16px; color: white;"  class="navbar-brand" href="#">Home</a>
-      <a style="font-size: 16px; color: white;"  class="navbar-brand" href="#">Services</a>
-      <a style="font-size: 16px; color: white;"  class="navbar-brand" href="#">About</a>
-      <a style="font-size: 16px; color: white;"  class="navbar-brand" href="#">Contact us</a>
     </div>
   </div>
 <div class="form-inline my-2 my-lg-0">
@@ -32,16 +23,35 @@
       </div>
 </nav>
 <form action="{{ url_for('recommend') }}" method="post">
-  <div class="form-group">
+  <div style="padding-left: 13px" class="form-group">
     <label style="font-size: 23px; color: white" for="exampleInputEmail1">Movie Title </label>
-    <input type="text" name="movie_user_likes" required class="form-control" placeholder="Title">
+    <input style="width: 54%;" type="text" name="movie_user_likes" required class="form-control" placeholder="Title">
   </div>
-  <button type="submit" name="recommend" class="btn btn-primary">Submit</button>
+  <button style="margin-left: 13px; font-size: 12px" type="submit" name="recommend" class="btn btn-primary">Submit</button>
 </form>
-<div class="movies">
-{% for movie in movies %}
-{{ movie }}
-{% endfor %}
-</div>
+<canvas id="bar-chart" width="35%" height="12%" ></canvas>
+<script>
+     var config = {
+      type: 'bar',
+      data: {
+        datasets: [{
+          data: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+          backgroundColor: [
+            '#40ff00', '#ff0000', '#ff8000', '#0000ff', '#D3D3D3', '#80ffff', '#ff66cc', '#99004d', '#ffff00', '#ff0066'
+          ],
+          label: 'Recommended Movies'
+        }],
+        labels: {{ data|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('bar-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+  </script>
 
 {% endblock %}
