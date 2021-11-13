@@ -140,27 +140,32 @@ def get_index_from_title(title):
 @login_required
 def recommend():
     movie_user_likes = request.form['movie_user_likes']
-    features = ['keywords', 'cast', 'genres', 'director']
-    for feature in features:
-        df[feature] = df[feature].fillna('')
-    df["combined_features"] = df.apply(combine_features, axis=1)
-    vectorizer = CountVectorizer()
-    matrix = vectorizer.fit_transform(df["combined_features"])
-    cosine_sim = cosine_similarity(matrix)
-    movie_index = get_index_from_title(movie_user_likes)
-    similar_movies = list(enumerate(cosine_sim[movie_index]))
-    sorted_similar_movies = sorted(similar_movies, key=lambda x: x[1], reverse=True)
-    count = 0
-    movies = []
-    for movie in sorted_similar_movies:
-        movies.append(get_title_from_index(movie[0]))
-        count += 1
-        if count >= 10:
-            break
-        data = Movie(movie_user_likes, get_title_from_index(movie[0]))
-        db.session.add(data)
-        db.session.commit()
-    return render_template('content.html', data=movies)
+    if df['title'].str.contains(movie_user_likes).any():
+        features = ['keywords', 'cast', 'genres', 'director']
+        for feature in features:
+            df[feature] = df[feature].fillna('')
+        df["combined_features"] = df.apply(combine_features, axis=1)
+        vectorizer = CountVectorizer()
+        matrix = vectorizer.fit_transform(df["combined_features"])
+        cosine_sim = cosine_similarity(matrix)
+        movie_index = get_index_from_title(movie_user_likes)
+        similar_movies = list(enumerate(cosine_sim[movie_index]))
+        sorted_similar_movies = sorted(similar_movies, key=lambda x: x[1], reverse=True)
+        count = 0
+        movies = []
+        for movie in sorted_similar_movies:
+            movies.append(get_title_from_index(movie[0]))
+            count += 1
+            if count >= 10:
+                break
+            data = Movie(movie_user_likes, get_title_from_index(movie[0]))
+            db.session.add(data)
+            db.session.commit()
+        return render_template('content.html', data=movies)
+    else:
+        flash('this movie does not exist !')
+    return redirect(url_for('content'))
+
 
 
 if __name__ == '__main__':

@@ -22,9 +22,18 @@
          <a class="btn btn-warning" href="{{ url_for('logout') }}" role="button">Log out</a>
       </div>
 </nav>
+<div class="alert">
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div class="notification is-danger">
+        {{ messages[0] }}
+    </div>
+{% endif %}
+{% endwith %}
+</div>
 <form action="{{ url_for('recommend') }}" method="post">
   <div style="padding-left: 13px" class="form-group">
-    <label style="font-size: 23px; color: white" for="exampleInputEmail1">Movie Title </label>
+    <label style="font-size: 23px; color: black; font-family: Arial" for="exampleInputEmail1">Movie Title :</label>
     <input style="width: 54%;" type="text" name="movie_user_likes" required class="form-control" placeholder="Title">
   </div>
   <button style="margin-left: 13px; font-size: 12px" type="submit" name="recommend" class="btn btn-primary">Submit</button>
