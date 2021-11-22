@@ -28,12 +28,8 @@
     </div>
   </div>
 </nav>
-    <div>
-    <h1 style="color: white; text-align: center; margin-top: 3px">Sign up</h1>
-    <p style="color: white; font-size: 19px; text-align: center; display: block">please fill in this form to create an account !</p>
-    <hr style="background-color: gray">
-    </div>
-    <div style="height: 540px;" class="loginbox">
+
+    <div style="height: 520px; margin-top: 12px; padding-top: 2px;margin-bottom: 0px" class="loginbox">
  {% with messages = get_flashed_messages() %}
 {% if messages %}
     <div class="notification is-danger">
@@ -41,7 +37,6 @@
     </div>
 {% endif %}
 {% endwith %}
-    <img style="margin-top: 12px"  src="https://thumbs.dreamstime.com/b/login-icon-button-vector-illustration-isolated-white-background-127000574.jpg" class="image">
     <form action="{{ url_for('register') }}" method="post">
         <label>Username : <br>
             <input style="margin-top: 0;" type="text" name="username" placeholder="Username" required>
@@ -57,7 +52,7 @@
         </label><br>
         <button type="submit" class="btn btn-primary btn-lg">Sign up</button>
     </form><br>
-    	<div class="text-center">You have already an account? <a href="{{ url_for('login') }}">Sign here!</a></div>
+    	<div class="text-center">You have already an account? <a href="{{ url_for('login') }}">login in here!</a></div>
     </div>
 
 {% endblock %}
