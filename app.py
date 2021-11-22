@@ -1,12 +1,8 @@
-from flask_migrate import Migrate
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, logout_user, login_required
 from flask_login import LoginManager, UserMixin
 import pandas as pd
-import numpy as np
-from flask import render_template, request
-from flask import Flask
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -16,9 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret-key'
 db = SQLAlchemy(app)
 db.app = app
-db.init_app(app)
-migrate = Migrate(app, db)
-
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
@@ -38,11 +31,13 @@ class User(db.Model, UserMixin):
 
 class Movie(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    movie = db.Column(db.String(255), nullable=False)
+    fmovie = db.Column(db.String(255), nullable=False)
+    smovie = db.Column(db.String(255), nullable=False)
     similar = db.Column(db.String(255), nullable=False)
 
-    def __init__(self, movie, similar):
-        self.movie = movie
+    def __init__(self, fmovie, smovie, similar):
+        self.fmovie = fmovie
+        self.smovie = smovie
         self.similar = similar
 
 
@@ -87,7 +82,7 @@ def register():  # put application's code here
     email = request.form['email']
     password = request.form['password']
     password_confirm = request.form['confirm_password']
-    user = User.query.filter_by(email=email, username=username).first()
+    user = User.query.filter_by(email=email).first()
     if user:
         flash("email is already used !")
         return render_template('signup.html')
@@ -120,12 +115,15 @@ def content():
     return render_template('content.html')
 
 
-df = pd.read_csv('https://raw.githubusercontent.com/codeheroku/Introduction-to-Machine-Learning/master/Building'
-                 '%20a%20Movie%20Recommendation%20Engine/movie_dataset.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/saidsabri010/dataset/main/movie_dataset.csv')
+
+
+def combine_columns(row):
+    return row["keywords"] + " " + row["cast"] + " " + row["genres"] + " " + row["director"]
 
 
 def combine_features(row):
-    return row["keywords"] + " " + row["cast"] + " " + row["genres"] + " " + row["director"]
+    return row["original_title"] + " " + row["cast"] + " " + row["genres"] + " " + row["director"]
 
 
 def get_title_from_index(index):
@@ -140,34 +138,47 @@ def get_index_from_title(title):
 @login_required
 def recommend():
     movie_user_likes = request.form['movie_user_likes']
-    if df['title'].str.contains(movie_user_likes).any():
-        features = ['keywords', 'cast', 'genres', 'director']
-        for feature in features:
-            df[feature] = df[feature].fillna('')
-        df["combined_features"] = df.apply(combine_features, axis=1)
+    second_movie_user_likes = request.form['second_movie_user_likes']
+    if df['title'].str.contains(movie_user_likes, second_movie_user_likes).any():
+        columns = ['keywords', 'cast', 'genres', 'director', 'original_title']
+        for column in columns:
+            df[column] = df[column].fillna('')
+        df["combined_features"] = df.apply(combine_columns, axis=1)
+        df["combined_columns"] = df.apply(combine_features, axis=1)
         vectorizer = CountVectorizer()
         matrix = vectorizer.fit_transform(df["combined_features"])
+        matrix2 = vectorizer.fit_transform(df['combined_columns'])
         cosine_sim = cosine_similarity(matrix)
+        cosine_sim2 = cosine_similarity(matrix2)
         movie_index = get_index_from_title(movie_user_likes)
+        movie_index2 = get_index_from_title(second_movie_user_likes)
         similar_movies = list(enumerate(cosine_sim[movie_index]))
+        similar_movies2 = list(enumerate(cosine_sim2[movie_index2]))
         sorted_similar_movies = sorted(similar_movies, key=lambda x: x[1], reverse=True)
+        sorted_similar_movies2 = sorted(similar_movies2, key=lambda x: x[1], reverse=True)
         count = 0
         movies = []
-        for movie in sorted_similar_movies:
-            movies.append(get_title_from_index(movie[0]))
+        for movie, movie2 in zip(sorted_similar_movies, sorted_similar_movies2):
+            if sorted_similar_movies[movie[0]] >= sorted_similar_movies2[movie2[0]]:
+                movies.append(get_title_from_index(movie[0]))
+                print('this movie of first choice', movie[0])
+                data = Movie(movie_user_likes, second_movie_user_likes, get_title_from_index(movie[0]))
+                db.session.add(data)
+                db.session.commit()
+            else:
+                movies.append(get_title_from_index(movie2[0]))
+                print('this movie is of second choice', movie2[0])
+                data = Movie(movie_user_likes, second_movie_user_likes, get_title_from_index(movie2[0]))
+                db.session.add(data)
+                db.session.commit()
             count += 1
             if count >= 10:
                 break
-            data = Movie(movie_user_likes, get_title_from_index(movie[0]))
-            db.session.add(data)
-            db.session.commit()
-        return render_template('content.html', data=movies)
+        return render_template('content.html', data=movies, movie1=movie_user_likes, movie2= second_movie_user_likes)
     else:
         flash('this movie does not exist !')
     return redirect(url_for('content'))
 
 
-
 if __name__ == '__main__':
-    db.create_all()
     app.run()

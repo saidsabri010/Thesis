@@ -33,8 +33,9 @@
 </div>
 <form action="{{ url_for('recommend') }}" method="post">
   <div style="padding-left: 13px" class="form-group">
-    <label style="font-size: 23px; color: black; font-family: Arial" for="exampleInputEmail1">Movie Title :</label>
-    <input style="width: 54%;" type="text" name="movie_user_likes" required class="form-control" placeholder="Title">
+    <label style="font-size: 23px; color: black; font-family: Arial,serif" for="exampleInputEmail1">Movie Title :</label>
+    <input style="width: 54%; margin-bottom: 6px" type="text" name="movie_user_likes" required class="form-control" placeholder="Title">
+     <input style="width: 54%;" type="text" name="second_movie_user_likes" required class="form-control" placeholder="Title">
   </div>
   <button style="margin-left: 13px; font-size: 12px" type="submit" name="recommend" class="btn btn-primary">Submit</button>
 </form>
@@ -48,7 +49,7 @@
           backgroundColor: [
             '#40ff00', '#ff0000', '#ff8000', '#0000ff', '#D3D3D3', '#80ffff', '#ff66cc', '#99004d', '#ffff00', '#ff0066'
           ],
-          label: 'Recommended Movies'
+          label: 'Recommended Movies of {{ movie1 }} and {{ movie2 }}'
         }],
         labels: {{ data|safe }}
       },
