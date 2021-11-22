@@ -174,12 +174,10 @@ def recommend():
             count += 1
             if count >= 10:
                 break
-        return render_template('content.html', data=movies, movie1=movie_user_likes, movie2= second_movie_user_likes)
+        return render_template('content.html', data=movies, movie1=movie_user_likes, movie2=second_movie_user_likes)
     else:
         flash('this movie does not exist !')
     return redirect(url_for('content'))
 
 
-if __name__ == '__main__':
-    app.run()
-
+app.run()
