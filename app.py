@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, logout_user, login_required
 from flask_login import LoginManager, UserMixin
 import pandas as pd
+import os
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -15,6 +16,7 @@ db.app = app
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
+port = int(os.environ.get('PORT', 5000))
 
 
 class User(db.Model, UserMixin):
@@ -181,4 +183,5 @@ def recommend():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=port, debug=True)
+
