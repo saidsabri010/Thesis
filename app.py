@@ -1,7 +1,7 @@
-from flask import Flask, render_template, url_for, request, redirect, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user, logout_user, login_required, LoginManager, UserMixin
 import pandas as pd
+from flask import Flask, render_template, url_for, request, redirect, flash
+from flask_login import login_user, logout_user, login_required, LoginManager, UserMixin
+from flask_sqlalchemy import SQLAlchemy
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
