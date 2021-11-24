@@ -120,7 +120,7 @@ def logout():
 @app.route('/content', methods=['GET', 'POST'])
 @login_required
 def content():
-    query = db.session.query(Title.title).limit(10)
+    query = db.session.query(Title.title)
     return render_template('content.html', examples=query)
 
 
