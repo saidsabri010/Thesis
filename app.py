@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'postgresql://ppfbseibxpyhis:c6eeb144316b3ac0b3b03b6de8b3838b108eec7535f34a11445cb5969499c101@ec2-54-74-102-48.eu-west-1.compute.amazonaws.com:5432/d8t7o4cqmc589d'
+    'SQLALCHEMY_DATABASE_URI'] = 'postgres://ppfbseibxpyhis:c6eeb144316b3ac0b3b03b6de8b3838b108eec7535f34a11445cb5969499c101@ec2-54-74-102-48.eu-west-1.compute.amazonaws.com:5432/d8t7o4cqmc589d'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret-key'
 db = SQLAlchemy(app)
@@ -120,7 +120,7 @@ def logout():
 @app.route('/content', methods=['GET', 'POST'])
 @login_required
 def content():
-    query = db.session.query(User.username)
+    query = db.session.query(Title.title).limit(10)
     return render_template('content.html', examples=query)
 
 
