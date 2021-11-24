@@ -39,6 +39,9 @@
   </div>
   <button style="margin-left: 13px; font-size: 12px" type="submit" name="recommend" class="btn btn-primary">Submit</button>
 </form>
+    {% for example in examples %}
+        {{ example }}
+    {% endfor %}
 <canvas id="bar-chart" width="35%" height="12%" ></canvas>
 <script>
      var config = {

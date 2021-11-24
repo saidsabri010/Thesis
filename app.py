@@ -6,7 +6,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ppfbseibxpyhis:c6eeb144316b3ac0b3b03b6de8b3838b108eec7535f34a11445cb5969499c101@ec2-54-74-102-48.eu-west-1.compute.amazonaws.com:5432/d8t7o4cqmc589d'
+app.config[
+    'SQLALCHEMY_DATABASE_URI'] = 'postgresql://ppfbseibxpyhis:c6eeb144316b3ac0b3b03b6de8b3838b108eec7535f34a11445cb5969499c101@ec2-54-74-102-48.eu-west-1.compute.amazonaws.com:5432/d8t7o4cqmc589d'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret-key'
 db = SQLAlchemy(app)
@@ -38,6 +39,14 @@ class Movie(db.Model, UserMixin):
         self.fmovie = fmovie
         self.smovie = smovie
         self.similar = similar
+
+
+class Title(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, title):
+        self.title = title
 
 
 @login_manager.user_loader
@@ -111,7 +120,8 @@ def logout():
 @app.route('/content', methods=['GET', 'POST'])
 @login_required
 def content():
-    return render_template('content.html')
+    query = db.session.query(User.username)
+    return render_template('content.html', examples=query)
 
 
 df = pd.read_csv('https://raw.githubusercontent.com/saidsabri010/dataset/main/movie_dataset.csv')
@@ -173,7 +183,7 @@ def recommend():
             count += 1
             if count >= 10:
                 break
-        return render_template('content.html', data=movies, movie1=movie_user_likes, movie2= second_movie_user_likes)
+        return render_template('content.html', data=movies, movie1=movie_user_likes, movie2=second_movie_user_likes)
     else:
         flash('this movie does not exist !')
     return redirect(url_for('content'))
@@ -181,4 +191,3 @@ def recommend():
 
 if __name__ == '__main__':
     app.run()
-
