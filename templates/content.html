@@ -3,11 +3,21 @@
     <style>
         body, html {
             background-image: url("https://previews.123rf.com/images/1stchoice/1stchoice1506/1stchoice150600018/41591970-white-grey-background-in-soft-grunge-style-concrete-texture.jpg");
-            height: 100%;
-            background-repeat: no-repeat;
+
             background-size: cover;
             margin: 0;
 }
+        .movies{
+            display: block;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            font-size: 14px;
+            word-spacing: 2px;
+            padding-left: 4px;
+            border: 1px solid black;
+            margin-bottom: 13px;
+
+        }
     </style>
 {% endblock %}
 
@@ -39,9 +49,6 @@
   </div>
   <button style="margin-left: 13px; font-size: 12px" type="submit" name="recommend" class="btn btn-primary">Submit</button>
 </form>
-    {% for example in examples %}
-        {{ example }}
-    {% endfor %}
 <canvas id="bar-chart" width="35%" height="12%" ></canvas>
 <script>
      var config = {
@@ -66,5 +73,10 @@
       window.myPie = new Chart(ctx, config);
     };
   </script>
-
+    <h3 style="margin-top: 5px; margin-left: 8px">some movies examples :</h3>
+    <div class="movies">
+ {% for example in examples %}
+        {{ example }}
+    {% endfor %}
+    </div>
 {% endblock %}

@@ -120,7 +120,7 @@ def logout():
 @app.route('/content', methods=['GET', 'POST'])
 @login_required
 def content():
-    query = db.session.query(Title.title)
+    query = db.session.query(Title.title).limit(120)
     return render_template('content.html', examples=query)
 
 
@@ -146,6 +146,7 @@ def get_index_from_title(title):
 @app.route('/recommend', methods=['GET', 'POST'])
 @login_required
 def recommend():
+    query = db.session.query(Title.title).limit(120)
     movie_user_likes = request.form['movie_user_likes']
     second_movie_user_likes = request.form['second_movie_user_likes']
     if df['title'].str.contains(movie_user_likes, second_movie_user_likes).any():
@@ -183,7 +184,7 @@ def recommend():
             count += 1
             if count >= 10:
                 break
-        return render_template('content.html', data=movies, movie1=movie_user_likes, movie2=second_movie_user_likes)
+        return render_template('content.html', data=movies, movie1=movie_user_likes, examples=query)
     else:
         flash('this movie does not exist !')
     return redirect(url_for('content'))
