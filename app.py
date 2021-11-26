@@ -7,9 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'postgresql://ppfbseibxpyhis' \
-                                 ':c6eeb144316b3ac0b3b03b6de8b3838b108eec7535f34a11445cb5969499c101@ec2-54-74-102-48' \
-                                 '.eu-west-1.compute.amazonaws.com:5432/d8t7o4cqmc589d '
+    'SQLALCHEMY_DATABASE_URI'] = 'postgresql://ppfbseibxpyhis:c6eeb144316b3ac0b3b03b6de8b3838b108eec7535f34a11445cb5969499c101@ec2-54-74-102-48.eu-west-1.compute.amazonaws.com:5432/d8t7o4cqmc589d'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret-key'
 db = SQLAlchemy(app)
@@ -151,7 +149,7 @@ def recommend():
     query = db.session.query(Title.title).limit(120)
     movie_user_likes = request.form['movie_user_likes']
     second_movie_user_likes = request.form['second_movie_user_likes']
-    if df['title'].str.contains(movie_user_likes).any() or df['title'].str.contains(second_movie_user_likes).any():
+    if df['title'].str.contains(movie_user_likes).any() and df['title'].str.contains(second_movie_user_likes).any():
         columns = ['keywords', 'cast', 'genres', 'director', 'original_title']
         for column in columns:
             df[column] = df[column].fillna('')
@@ -170,7 +168,7 @@ def recommend():
         sorted_similar_movies2 = sorted(similar_movies2, key=lambda x: x[1], reverse=True)
         count = 0
         movies = []
-        for movie, movie2 in zip(sorted_similar_movies, sorted_similar_movies2):
+        for movie, movie2 in zip(sorted_similar_movies[1:], sorted_similar_movies2[1:]):
             if sorted_similar_movies[movie[0]] >= sorted_similar_movies2[movie2[0]]:
                 movies.append(get_title_from_index(movie[0]))
                 print('this movie of first choice', movie[0])
