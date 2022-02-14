@@ -1,3 +1,5 @@
+import os.path
+
 import pandas as pd
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_login import login_user, logout_user, login_required, LoginManager, UserMixin
@@ -54,9 +56,14 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+IMAGES_FOLDER = os.path.join('static','images')
+app.config['images'] = IMAGES_FOLDER
+
+
 @app.route('/')
 def index():  # put application's code here
-    return render_template('index.html')
+    index_image = os.path.join(app.config['images'], 'bakcground.png')
+    return render_template('index.html', image=index_image)
 
 
 @app.route('/login')
@@ -184,7 +191,8 @@ def recommend():
             count += 1
             if count >= 10:
                 break
-        return render_template('content.html', data=movies, movie1=movie_user_likes, examples=query, movie2=second_movie_user_likes)
+        return render_template('content.html', data=movies, movie1=movie_user_likes, examples=query,
+                               movie2=second_movie_user_likes)
     else:
         flash('this movie does not exist !')
     return redirect(url_for('content'))
